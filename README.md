@@ -195,5 +195,4 @@ curl -fsSL https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.s
 
 ## License
 
-© [ImbaCloud](https://imbacloud.ru/) — ИП Кадимагомедов Шамиль Ахмедович  
-Worker install package for registered clients.
+© [ImbaCloud](https://imbacloud.ru/). Worker install package for registered clients.
