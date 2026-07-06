@@ -1,0 +1,13 @@
+[Unit]
+Description=Imbai Worker (user service)
+After=network-online.target
+
+[Service]
+WorkingDirectory=%i/worker
+EnvironmentFile=%i/.env.worker
+Environment=PYTHONPATH=%i:%i/worker
+ExecStart=%i/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port ${WORKER_PORT}
+Restart=unless-stopped
+
+[Install]
+WantedBy=default.target

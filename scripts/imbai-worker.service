@@ -1,0 +1,16 @@
+[Unit]
+Description=Imbai Worker (native)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/imbai/worker
+EnvironmentFile=/opt/imbai/.env.worker
+Environment=PYTHONPATH=/opt/imbai:/opt/imbai/worker
+ExecStart=/opt/imbai/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port ${WORKER_PORT}
+Restart=unless-stopped
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
