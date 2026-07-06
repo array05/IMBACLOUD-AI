@@ -1,12 +1,7 @@
 #!/usr/bin/env bash
-# One-liner for clients — NO access to gateway server needed.
-#
-# Admin first (on gateway):
-#   ./scripts/issue-client-token.sh client-prod
-#
-# Client runs (only needs sudo on THEIR server once):
-#   curl -fsSL https://raw.githubusercontent.com/YOUR_ORG/imbai-worker/main/install.sh | \
-#     bash -s -- --worker-id client-prod --workspace /var/www/app --registration-token TOKEN
+# Imbai Worker — client install from GitHub
+# Platform: https://imbacloud.ru/
+# Repo:    https://github.com/array05/IMBACLOUD-AI
 
 set -euo pipefail
 

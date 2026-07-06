@@ -28,8 +28,10 @@ Optional:
   --help
 
 Install from GitHub (client, no gateway SSH):
-  curl -fsSL https://github.com/YOUR_ORG/imbai-worker/raw/main/install.sh | bash -s -- \\
+  curl -fsSL https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.sh | bash -s -- \\
     --worker-id client-prod --workspace /var/www/app --registration-token TOKEN
+
+Platform: https://imbacloud.ru/
 EOF
 }
 

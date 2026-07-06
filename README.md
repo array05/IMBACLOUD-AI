@@ -1,50 +1,62 @@
 # IMBACLOUD AI — Worker
 
-**Imbai Worker** — агент, который устанавливается на **ваш сервер** и подключается к облаку [IMBACLOUD AI](https://github.com/array05/IMBACLOUD-AI).
+[![ImbaCloud](https://img.shields.io/badge/ImbaCloud-imbacloud.ru-2563eb?style=for-the-badge)](https://imbacloud.ru/)
+[![GitHub](https://img.shields.io/badge/GitHub-IMBACLOUD--AI-181717?style=for-the-badge&logo=github)](https://github.com/array05/IMBACLOUD-AI)
+
+**Imbai Worker** — агент, который устанавливается на **ваш сервер** и подключается к платформе **[ImbaCloud AI](https://imbacloud.ru/)**.
+
+> 🌐 Сайт: **[imbacloud.ru](https://imbacloud.ru/)** · VPS, Dedicated и GPU от 637 ₽/мес  
+> 📚 Документация: [imbacloud.ru — раздел «Документация»](https://imbacloud.ru/)  
+> 💬 Поддержка: [@imbacloud_bot](https://t.me/imbacloud_bot) · support@imbacloud.ru
 
 Этот репозиторий содержит **только клиентскую часть** (worker).  
-Gateway, LLM и биллинг живут на стороне IMBACLOUD — вам не нужен к ним root-доступ.
+Gateway, LLM и биллинг — на стороне ImbaCloud. Root-доступ к нашим серверам **не нужен**.
 
 ---
 
 ## Зачем это нужно
 
-IMBACLOUD AI — платформа AI-агента, который может:
+**[ImbaCloud](https://imbacloud.ru/)** — облачный хостинг для разработчиков и бизнеса.  
+**IMBACLOUD AI** — AI-агент поверх инфраструктуры ImbaCloud:
 
-- выполнять команды на **вашем** сервере (`bash`, `git`, `docker`, `systemctl`…)
-- читать и писать файлы в указанной директории
-- решать задачи в несколько шагов (agent loop)
-- отвечать через LLM (Qwen и др.)
+- выполняет команды на **вашем** сервере (`bash`, `git`, `docker`, `systemctl`…)
+- читает и пишет файлы в указанной директории
+- решает задачи в несколько шагов (agent loop)
+- отвечает через LLM (Qwen и др.)
 
-Worker — это «руки» агента на вашей машине.  
-Gateway — «мозг» и API, через который вы (или ваше приложение) отправляете задачи.
+Worker — «руки» агента на вашей машине.  
+Gateway — «мозг» и API, через который вы отправляете задачи.
 
 ```
 ┌─────────────┐     HTTPS API      ┌──────────────────┐     tools     ┌─────────────────┐
-│  Ваш сайт   │ ────────────────▶  │  IMBACLOUD       │ ────────────▶ │  Worker         │
+│  Ваш сайт   │ ────────────────▶  │  IMBACLOUD AI    │ ────────────▶ │  Worker         │
 │  PHP / app  │   /v1/agent/run    │  Gateway         │   HTTP :9090  │  (этот репо)    │
-└─────────────┘                    │  31.129.101.206  │               │  ВАШ сервер     │
+└─────────────┘                    │  imbacloud.ru    │               │  ВАШ VPS        │
                                    └────────┬─────────┘               └─────────────────┘
                                             │
                                             ▼ LLM inference
                                    ┌──────────────────┐
-                                   │  GPU / vLLM      │
+                                   │  GPU-сервер      │
+                                   │  ImbaCloud       │
                                    └──────────────────┘
 ```
+
+> Нет своего VPS? Закажите на **[imbacloud.ru](https://imbacloud.ru/)** — от 637 ₽/мес, 13 локаций.
 
 ---
 
 ## Быстрая установка
 
-### 1. Получите от администратора IMBACLOUD
+### 1. Получите от [ImbaCloud](https://imbacloud.ru/)
 
 | Параметр | Пример |
 |----------|--------|
 | `worker-id` | `client-prod` |
 | `registration-token` | одноразовый token |
-| `gateway` | `http://31.129.101.206:8080` |
+| `gateway` | URL API (выдаёт поддержка) |
 
-> Token **одноразовый**. Root-пароль gateway **не нужен**.
+> Token **одноразовый**. Пароль root gateway **не нужен**.  
+> Запросить token: [Telegram @imbacloud_bot](https://t.me/imbacloud_bot) или support@imbacloud.ru
 
 ### 2. Одна команда на вашем сервере
 
@@ -57,8 +69,9 @@ curl -fsSL https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.s
 ```
 
 Замените:
-- `/var/www/myapp` — корень вашего проекта (или `/root`, `/home/user/app`)
-- `ВАШ_TOKEN` — token от администратора
+- `/var/www/myapp` — корень вашего проекта
+- `ВАШ_TOKEN` — token от ImbaCloud
+- `--gateway` — URL API (актуальный — у поддержки или в [кабинете](https://imbacloud.ru/))
 
 ### 3. Проверка
 
@@ -71,8 +84,6 @@ curl -fsSL https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.s
 
 ## Установка без root
 
-Если есть Python 3 и пользователь с доступом к проекту:
-
 ```bash
 curl -fsSL https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.sh | bash -s -- \
   --worker-id client-prod \
@@ -84,8 +95,6 @@ curl -fsSL https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.s
 ---
 
 ## Использование после установки
-
-Worker сам по себе **не имеет UI**. Вы работаете через **Gateway API**:
 
 ```bash
 curl -X POST http://31.129.101.206:8080/v1/agent/run \
@@ -104,7 +113,7 @@ curl -X POST http://31.129.101.206:8080/v1/agent/run \
 | `POST /v1/chat/completions` | Chat с LLM (без tools) |
 | `GET /v1/workers` | Список worker'ов (online/offline) |
 
-API key выдаёт администратор IMBACLOUD (отдельно от install token).
+API key выдаёт [ImbaCloud](https://imbacloud.ru/) (отдельно от install token).
 
 ---
 
@@ -113,8 +122,8 @@ API key выдаёт администратор IMBACLOUD (отдельно от
 | Компонент | Минимум |
 |-----------|---------|
 | ОС | Linux (Ubuntu 22.04+, Debian 12+) |
-| Python | 3.10+ (для native install) |
-| Docker | опционально (`--docker`) |
+| Python | 3.10+ |
+| VPS | свой сервер или [ImbaCloud VPS](https://imbacloud.ru/) от 637 ₽/мес |
 | Сеть | исходящий HTTPS + входящий **9090** с IP gateway |
 | Права | root **или** user с доступом к workspace |
 
@@ -122,23 +131,19 @@ API key выдаёт администратор IMBACLOUD (отдельно от
 
 ## Firewall
 
-Откройте порт **9090** **только** для IP gateway:
+Откройте порт **9090** **только** для IP gateway ImbaCloud (уточните у поддержки).
 
-```
-31.129.101.206  →  ваш_сервер:9090
-```
-
-Не открывайте 9090 в интернет — worker принимает команды только от gateway.
+Не открывайте 9090 в интернет.
 
 ---
 
 ## Безопасность
 
 - **Registration token** — одноразовый, только для установки
-- **Worker token** — генерируется локально, хранится в `.env.worker`
-- **API key** — для запросов к gateway (ваше приложение / PHP)
+- **Worker token** — генерируется локально (`.env.worker`)
+- **API key** — для запросов к gateway
 - Файловые tools ограничены `workspace`
-- Shell — blocklist на опасные команды (`rm -rf /`, `mkfs`, …)
+- Shell — blocklist на опасные команды
 
 ---
 
@@ -155,17 +160,14 @@ API key выдаёт администратор IMBACLOUD (отдельно от
 
 ---
 
-## Обновление worker
+## Обновление
 
 ```bash
-cd /opt/imbai   # или каталог установки
 curl -fsSL https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.sh | bash -s -- \
   --worker-id client-prod \
   --workspace /var/www/myapp \
   --registration-token НОВЫЙ_TOKEN
 ```
-
-Нужен новый registration token от администратора.
 
 ---
 
@@ -173,27 +175,25 @@ curl -fsSL https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.s
 
 | Проблема | Решение |
 |----------|---------|
-| `Invalid registration token` | Token одноразовый / истёк — запросите новый |
-| Worker offline на gateway | `systemctl status imbai-worker` или `docker logs imbai-worker` |
-| Gateway не достучится | firewall :9090, проверьте `WORKER_PUBLIC_URL` |
-| Команды в Docker, не на хосте | переустановите **без** `--docker` (native mode) |
-
-Логи native:
-```bash
-journalctl -u imbai-worker -f
-```
+| `Invalid registration token` | Запросите новый token у [поддержки](https://imbacloud.ru/) |
+| Worker offline | `journalctl -u imbai-worker -f` |
+| Gateway недоступен | Проверьте firewall, напишите в [@imbacloud_bot](https://t.me/imbacloud_bot) |
+| Команды в Docker, не на хосте | Переустановите без `--docker` |
 
 ---
 
 ## Поддержка
 
-- Gateway: `http://31.129.101.206:8080/health`
-- Worker health: `http://localhost:9090/health`
-- Swagger: `http://31.129.101.206:8080/docs`
+| Канал | Ссылка |
+|-------|--------|
+| 🌐 Сайт | [imbacloud.ru](https://imbacloud.ru/) |
+| 💬 Telegram | [@imbacloud_bot](https://t.me/imbacloud_bot) |
+| ✉️ Email | support@imbacloud.ru |
+| 📦 GitHub | [array05/IMBACLOUD-AI](https://github.com/array05/IMBACLOUD-AI) |
 
 ---
 
 ## License
 
-Proprietary — IMBACLOUD AI Platform.  
+© [ImbaCloud](https://imbacloud.ru/) — ИП Кадимагомедов Шамиль Ахмедович  
 Worker install package for registered clients.
