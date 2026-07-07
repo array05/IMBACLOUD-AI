@@ -8,8 +8,9 @@ set -euo pipefail
 IMBAI_GITHUB="${IMBAI_GITHUB:-https://github.com/array05/IMBACLOUD-AI}"
 IMBAI_VERSION="${IMBAI_VERSION:-main}"
 IMBAI_INSTALL_DIR="${IMBAI_INSTALL_DIR:-/opt/imbai}"
+IMBAI_INSTALL_SCRIPT_VERSION="2026.07.07-2"
 
-echo "==> Imbai Worker installer"
+echo "==> Imbai Worker installer (script ${IMBAI_INSTALL_SCRIPT_VERSION})"
 echo "    repo: ${IMBAI_GITHUB}"
 echo "    dir:  ${IMBAI_INSTALL_DIR}"
 
