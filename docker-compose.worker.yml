@@ -10,7 +10,7 @@ services:
     ports:
       - "${WORKER_PORT:-9090}:9090"
     volumes:
-      - ${WORKER_WORKSPACE:-/opt/client/project}:${WORKER_WORKSPACE:-/opt/client/project}
+      - ${WORKER_WORKSPACE:-/root}:${WORKER_WORKSPACE:-/root}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9090/health"]
       interval: 30s

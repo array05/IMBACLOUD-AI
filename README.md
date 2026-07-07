@@ -90,13 +90,18 @@ Gateway — «мозг» и API, через который вы отправля
 ```bash
 curl -fsSL https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.sh | bash -s -- \
   --worker-id client-prod \
-  --workspace /var/www/myapp \
   --registration-token ВАШ_TOKEN \
   --gateway http://31.129.101.206:8080
 ```
 
+По умолчанию workspace = **`/root`** (весь root home на сервере).
+
+Другой путь — явно:
+```bash
+  --workspace /var/www/myapp
+```
+
 Замените:
-- `/var/www/myapp` — корень вашего проекта
 - `ВАШ_TOKEN` — token от ImbaCloud
 - `--gateway` — URL API (актуальный — у поддержки или в [кабинете](https://imbacloud.ru/))
 
@@ -192,8 +197,8 @@ API key выдаёт [ImbaCloud](https://imbacloud.ru/) (отдельно от i
 ```bash
 curl -fsSL https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.sh | bash -s -- \
   --worker-id client-prod \
-  --workspace /var/www/myapp \
-  --registration-token НОВЫЙ_TOKEN
+  --registration-token НОВЫЙ_TOKEN \
+  --gateway http://31.129.101.206:8080
 ```
 
 ---

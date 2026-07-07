@@ -5,20 +5,21 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
 DEFAULT_GATEWAY="http://31.129.101.206:8080"
+DEFAULT_WORKSPACE="/root"
 DEFAULT_PORT=9090
 MODE="native"
 RUN_AS_USER=""
 
 usage() {
   cat <<EOF
-Usage: $(basename "$0") --worker-id ID --workspace PATH --registration-token TOKEN [options]
+Usage: $(basename "$0") --worker-id ID --registration-token TOKEN [options]
 
 Required:
   --worker-id ID              Worker name (e.g. client-prod)
-  --workspace PATH            Project path on THIS server
   --registration-token TOKEN  One-time token from admin (NOT gateway password)
 
 Optional:
+  --workspace PATH            Workspace on this server (default: ${DEFAULT_WORKSPACE})
   --url URL                   Public URL (default: auto-detect IP + port)
   --gateway URL               Gateway (default: ${DEFAULT_GATEWAY})
   --port PORT                 Port (default: ${DEFAULT_PORT})
@@ -29,7 +30,7 @@ Optional:
 
 Install from GitHub (client, no gateway SSH):
   curl -fsSL https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.sh | bash -s -- \\
-    --worker-id client-prod --workspace /var/www/app --registration-token TOKEN
+    --worker-id client-prod --registration-token TOKEN
 
 Platform: https://imbacloud.ru/
 EOF
@@ -204,10 +205,15 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ -z "$WORKER_ID" || -z "$WORKER_WORKSPACE" ]]; then
-  echo "Error: --worker-id and --workspace are required." >&2
+if [[ -z "$WORKER_ID" ]]; then
+  echo "Error: --worker-id is required." >&2
   usage
   exit 1
+fi
+
+if [[ -z "$WORKER_WORKSPACE" ]]; then
+  WORKER_WORKSPACE="${DEFAULT_WORKSPACE}"
+  echo "Using default workspace: ${WORKER_WORKSPACE}"
 fi
 
 if [[ -z "$REGISTRATION_TOKEN" ]]; then

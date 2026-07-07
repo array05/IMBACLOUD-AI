@@ -23,7 +23,6 @@ Install on **your server** (not the gateway). No gateway credentials needed.
 ```bash
 curl -fsSL https://raw.githubusercontent.com/YOUR_ORG/imbai-worker/main/install.sh | bash -s -- \
   --worker-id YOUR_WORKER_ID \
-  --workspace /var/www/myapp \
   --registration-token TOKEN_FROM_ADMIN
 ```
 
