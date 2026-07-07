@@ -88,7 +88,7 @@ Gateway — «мозг» и API, через который вы отправля
 ### 2. Одна команда на вашем сервере
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.sh | bash -s -- \
+curl -fsSL "https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.sh?v=20260707" | bash -s -- \
   --worker-id client-prod \
   --registration-token ВАШ_TOKEN \
   --gateway http://31.129.101.206:8080
@@ -117,7 +117,7 @@ curl -fsSL https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.s
 ## Установка без root
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.sh | bash -s -- \
+curl -fsSL "https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.sh?v=20260707" | bash -s -- \
   --worker-id client-prod \
   --workspace /home/deploy/myapp \
   --registration-token ВАШ_TOKEN \
@@ -195,7 +195,7 @@ API key выдаёт [ImbaCloud](https://imbacloud.ru/) (отдельно от i
 ## Обновление
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.sh | bash -s -- \
+curl -fsSL "https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.sh?v=20260707" | bash -s -- \
   --worker-id client-prod \
   --registration-token НОВЫЙ_TOKEN \
   --gateway http://31.129.101.206:8080
