@@ -76,20 +76,19 @@ Gateway — «мозг» и API, через который вы отправля
 
 ### 1. Получите от [ImbaCloud](https://imbacloud.ru/)
 
-| Параметр | Пример |
-|----------|--------|
-| `worker-id` | `client-prod` |
-| `registration-token` | одноразовый token |
-| `gateway` | URL API (выдаёт поддержка) |
+| Параметр | Пример | Откуда |
+|----------|--------|--------|
+| `worker-id` | `server-srv_abc123` | **Уникальный ID этого VPS** — из [кабинета ImbaCloud](https://imbacloud.ru/) или от поддержки |
+| `registration-token` | одноразовый token | ImbaCloud (один раз на установку) |
+| `gateway` | URL API | ImbaCloud |
 
-> Token **одноразовый**. Пароль root gateway **не нужен**.  
-> Запросить token: [Telegram @imbacloud_bot](https://t.me/imbacloud_bot) или support@imbacloud.ru
+> **Важно:** один `worker-id` = один сервер. На 3 VPS — три разных id. Не копируйте один и тот же id на несколько машин.
 
 ### 2. Одна команда на вашем сервере
 
 ```bash
 curl -fsSL "https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.sh?v=20260707" | bash -s -- \
-  --worker-id client-prod \
+  --worker-id server-srv_abc123 \
   --registration-token ВАШ_TOKEN \
   --gateway http://31.129.101.206:8080
 ```
@@ -102,8 +101,12 @@ curl -fsSL "https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.
 ```
 
 Замените:
+- `server-srv_abc123` — **ваш** `worker-id` (из панели — не придумывайте сами)
 - `ВАШ_TOKEN` — token от ImbaCloud
 - `--gateway` — URL API (актуальный — у поддержки или в [кабинете](https://imbacloud.ru/))
+
+> Token **одноразовый**. Пароль root gateway **не нужен**.  
+> Запросить token: [Telegram @imbacloud_bot](https://t.me/imbacloud_bot) или support@imbacloud.ru
 
 ### 3. Проверка
 
@@ -114,11 +117,37 @@ curl -fsSL "https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.
 
 ---
 
+## worker_id — что это
+
+**`worker_id`** — уникальное имя агента на конкретном VPS. Gateway по нему понимает, **на какой сервер** отправить задачу.
+
+```
+Пользователь (1 API key)
+    │
+    ├── worker_id: server-vps1  →  VPS в Москве
+    ├── worker_id: server-vps2  →  VPS в Амстердаме
+    └── worker_id: server-vps3  →  VPS в Финляндии
+```
+
+| | API key | worker_id |
+|--|---------|-----------|
+| Что это | доступ к gateway | конкретный сервер |
+| Сколько | один на пользователя (или несколько) | **один на каждый VPS** |
+| Где указать | `Authorization: Bearer ...` | `--worker-id` при установке и `"worker_id"` в API |
+
+**Из панели ImbaCloud** — id уже в команде установки (`server-{id}`). **Не меняйте** его вручную.
+
+**Ручная установка** — каждый сервер получает свой id от поддержки. Пример: `server-srv_abc123`, `server-srv_def456`.
+
+При смене VPS (миграция) — **остановите worker на старом сервере**, затем установите на новом с **новым** registration token. Тот же `worker_id` на двух машинах одновременно — конфликт в реестре gateway.
+
+---
+
 ## Установка без root
 
 ```bash
 curl -fsSL "https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.sh?v=20260707" | bash -s -- \
-  --worker-id client-prod \
+  --worker-id server-srv_abc123 \
   --workspace /home/deploy/myapp \
   --registration-token ВАШ_TOKEN \
   --user deploy
@@ -134,7 +163,7 @@ curl -X POST http://31.129.101.206:8080/v1/agent/run \
   -H "Content-Type: application/json" \
   -d '{
     "task": "проверь nginx и покажи статус",
-    "worker_id": "client-prod",
+    "worker_id": "server-srv_abc123",
     "stream": true
   }'
 ```
@@ -145,7 +174,7 @@ curl -X POST http://31.129.101.206:8080/v1/agent/run \
 | `POST /v1/chat/completions` | Chat с LLM (без tools) |
 | `GET /v1/workers` | Список worker'ов (online/offline) |
 
-API key выдаёт [ImbaCloud](https://imbacloud.ru/) (отдельно от install token).
+API key выдаёт [ImbaCloud](https://imbacloud.ru/) (отдельно от install token). **Один API key работает на все ваши серверы** — в запросе указываете нужный `worker_id`.
 
 ---
 
@@ -196,7 +225,7 @@ API key выдаёт [ImbaCloud](https://imbacloud.ru/) (отдельно от i
 
 ```bash
 curl -fsSL "https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.sh?v=20260707" | bash -s -- \
-  --worker-id client-prod \
+  --worker-id server-srv_abc123 \
   --registration-token НОВЫЙ_TOKEN \
   --gateway http://31.129.101.206:8080
 ```
@@ -208,6 +237,7 @@ curl -fsSL "https://raw.githubusercontent.com/array05/IMBACLOUD-AI/main/install.
 | Проблема | Решение |
 |----------|---------|
 | `Invalid registration token` | Запросите новый token у [поддержки](https://imbacloud.ru/) |
+| Два VPS с одним `worker-id` | Остановите worker на старом сервере, зарегистрируйте новый |
 | Worker offline | `journalctl -u imbai-worker -f` |
 | Gateway недоступен | Проверьте firewall, напишите в [@imbacloud_bot](https://t.me/imbacloud_bot) |
 | Команды в Docker, не на хосте | Переустановите без `--docker` |
